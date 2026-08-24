@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import ipaddress
 import json
 import os
 import re
@@ -55,6 +56,7 @@ DEFAULT_ADB_PORT = 5555
 CONNECT_TIMEOUT_S = 5.0
 AUTH_TIMEOUT_S = 30.0
 SHELL_TIMEOUT_S = 5.0
+AVAHI_OUTPUT_LIMIT_BYTES = 256 * 1024
 
 
 def emit(event: str, **values: Any) -> None:
@@ -111,7 +113,10 @@ def parse_avahi_records(output: str, service: str) -> list[dict[str, str]]:
         ):
             continue
 
-        address = fields[7]
+        try:
+            address = str(ipaddress.IPv4Address(fields[7]))
+        except ipaddress.AddressValueError:
+            continue
         try:
             advertised_port = int(fields[8])
         except ValueError:
@@ -521,12 +526,22 @@ class RemoteSession:
             return []
 
         try:
-            stdout, _ = await asyncio.wait_for(process.communicate(), timeout=6)
+            stdout = await asyncio.wait_for(
+                process.stdout.readexactly(AVAHI_OUTPUT_LIMIT_BYTES + 1),
+                timeout=6.0,
+            )
+        except asyncio.IncompleteReadError as error:
+            stdout = error.partial
         except TimeoutError:
-            process.kill()
+            stdout = None
+
+        if stdout is None or len(stdout) > AVAHI_OUTPUT_LIMIT_BYTES:
+            if process.returncode is None:
+                process.kill()
             await process.wait()
             return []
 
+        await process.wait()
         return parse_avahi_records(stdout.decode(errors="replace"), service)
 
     async def avahi_adb_hosts(self) -> list[dict[str, str]]:

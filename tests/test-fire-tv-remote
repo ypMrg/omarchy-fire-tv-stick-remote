@@ -24,6 +24,7 @@ mapfile -t arguments < <(
 [[ ${arguments[4]} == "Unconfigured Fire TV" ]]
 
 python3 - "$repo_root" <<'PY'
+import ipaddress
 import json
 import re
 import shlex
@@ -46,6 +47,7 @@ assert normalize_host("[fe80::1]:5555") == ("fe80::1", 5555)
 avahi_start = source.index("def decode_avahi_value(")
 avahi_end = source.index("\n\nclass RemoteSession", avahi_start)
 avahi_ns = {
+    "ipaddress": ipaddress,
     "re": re,
     "shlex": shlex,
     "DEFAULT_ADB_PORT": 5555,
@@ -64,6 +66,29 @@ assert records == [{
     "port": "5555",
 }]
 
+rich_name_output = (
+    r'=;wlan0;IPv4;device;_amzn-wplay._tcp;local;bad.local;'
+    r'192.168.1.148;37343;"n=<img src=https://example.test/pixel>"'
+)
+rich_name_records = avahi_ns["parse_avahi_records"](
+    rich_name_output,
+    "_amzn-wplay._tcp",
+)
+assert rich_name_records[0]["name"] == "<img src=https://example.test/pixel>"
+
+malicious_output = (
+    r'=;wlan0;IPv4;device;_amzn-wplay._tcp;local;bad.local;'
+    r'<img src=https://example.test/pixel>;37343;"n=Bad TV"'
+)
+assert avahi_ns["parse_avahi_records"](
+    malicious_output,
+    "_amzn-wplay._tcp",
+) == []
+
+
+assert "process.communicate()" not in source
+assert "process.stdout.readexactly(AVAHI_OUTPUT_LIMIT_BYTES + 1)" in source
+
 apps_start = source.index("APP_PACKAGES")
 apps_end = source.index("}", apps_start) + 1
 # Only the three UI apps should ship.
@@ -76,7 +101,7 @@ assert '"twitch"' not in source[apps_start:apps_end]
 manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
 assert manifest["schemaVersion"] == 1
 assert manifest["id"] == "io.github.ypmrg.fire-tv-remote"
-assert manifest["version"] == "1.0.1"
+assert manifest["version"] == "1.0.2"
 readme = (root / "README.md").read_text(encoding="utf-8")
 assert "Thomas Evans" in readme
 assert "omarchy-apple-tv-remote" in readme
@@ -134,6 +159,10 @@ assert "readonly property string statusDetail" in widget
 assert "component RemoteIcon" in widget
 assert 'Qt.resolvedUrl("assets/remote.svg")' in widget
 assert "iconComponent:" in widget
+assert "id: deviceButton" in widget
+assert "+ String(modelData.name).toUpperCase()" in widget
+assert 'tooltipText: "Fire TV Remote"' in widget
+assert widget.count("textFormat: Text.PlainText") >= 6
 assert "󰑩" not in widget
 print("helpers + assets + app allowlist ok")
 PY

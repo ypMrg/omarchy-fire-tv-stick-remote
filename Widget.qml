@@ -20,7 +20,6 @@ BarWidget {
   property string viewMode: "remote"
   property string activeDeviceName: deviceName
   property string activeIdentifier: ""
-  property string activeHost: host
   property string authName: ""
   property string authIdentifier: ""
   property string authMessage: ""
@@ -142,7 +141,6 @@ BarWidget {
   function updateActiveDevice(message) {
     activeDeviceName = String(message.name || activeDeviceName)
     activeIdentifier = String(message.identifier || activeIdentifier)
-    activeHost = String(message.host || activeHost)
   }
 
   function openDevices() {
@@ -526,7 +524,7 @@ BarWidget {
     iconComponent: barRemoteIcon
     active: root.popupOpen
     useActiveColor: false
-    tooltipText: root.activeDeviceName + " Fire TV"
+    tooltipText: "Fire TV Remote"
     onPressed: root.popupOpen = !root.popupOpen
   }
 
@@ -614,6 +612,7 @@ BarWidget {
             Text {
               width: parent.width
               text: root.activeDeviceName.toUpperCase()
+              textFormat: Text.PlainText
               color: root.foreground
               font.family: root.fontFamily
               font.pixelSize: root.clampFont(Style.font.subtitle, Style.space(11), Style.space(16))
@@ -925,6 +924,7 @@ BarWidget {
             visible: root.processError !== ""
             width: parent.width
             text: root.processError
+            textFormat: Text.PlainText
             color: root.accent
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
@@ -946,16 +946,15 @@ BarWidget {
             model: root.devices
 
             Button {
+              id: deviceButton
               required property int index
               required property var modelData
 
               width: devicesView.width
               height: Style.space(34)
               clip: true
-              text: String(modelData.name).toUpperCase()
-                + ((modelData.paired || modelData.authorized) ? "  ·  AUTH" : "  ·  NEW")
-                + (modelData.online ? "" : "  ·  OFFLINE")
-              iconText: (modelData.paired || modelData.authorized) ? "󰌆" : "󰐕"
+              text: ""
+              iconText: ""
               tooltipText: String(modelData.host || modelData.address || "")
               selected: String(modelData.identifier) === root.activeIdentifier
               hasCursor: index === root.selectedDeviceIndex
@@ -964,8 +963,27 @@ BarWidget {
               accent: root.accent
               fontFamily: root.fontFamily
               fontSize: root.textForBox(height)
-              iconSize: root.iconForBox(height)
               bordered: true
+
+              Text {
+                anchors.fill: parent
+                anchors.leftMargin: deviceButton.horizontalPadding
+                anchors.rightMargin: deviceButton.horizontalPadding
+                text: ((modelData.paired || modelData.authorized) ? "󰌆  " : "󰐕  ")
+                  + String(modelData.name).toUpperCase()
+                  + ((modelData.paired || modelData.authorized) ? "  ·  AUTH" : "  ·  NEW")
+                  + (modelData.online ? "" : "  ·  OFFLINE")
+                textFormat: Text.PlainText
+                color: deviceButton.selected
+                  ? Style.selectedStateColor(deviceButton.foreground, deviceButton.accent)
+                  : deviceButton.foreground
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                font.family: deviceButton.fontFamily
+                font.pixelSize: deviceButton.fontSize
+                font.bold: deviceButton.selected
+              }
+
               onHovered: function(isHovered) {
                 if (isHovered) root.selectedDeviceIndex = index
               }
@@ -994,6 +1012,7 @@ BarWidget {
           Text {
             width: parent.width
             text: "Authorize ADB for\n" + root.authName
+            textFormat: Text.PlainText
             color: root.foreground
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
@@ -1004,6 +1023,7 @@ BarWidget {
           Text {
             width: parent.width
             text: root.authMessage || "On the Fire TV, accept Allow USB debugging? then press Retry."
+            textFormat: Text.PlainText
             color: root.dim
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
@@ -1015,6 +1035,7 @@ BarWidget {
             visible: root.processError !== ""
             width: parent.width
             text: root.processError
+            textFormat: Text.PlainText
             color: root.accent
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
