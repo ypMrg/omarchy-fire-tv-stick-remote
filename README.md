@@ -2,7 +2,7 @@
 
 Control an Amazon Fire TV Stick from the Omarchy Quattro bar with the mouse or
 keyboard. The plugin uses network ADB and includes shortcuts for Netflix, Prime
-Video, and Disney+.
+Video, Disney+, and YouTube.
 
 ## Install
 
@@ -53,7 +53,7 @@ If discovery finds nothing, enter the IPv4 address shown under
 | P | Play / pause |
 | − / + | Volume |
 | W / S | Wake / sleep |
-| 1 / 2 / 3 | Netflix / Prime Video / Disney+ |
+| 1 / 2 / 3 / 4 | Netflix / Prime Video / Disney+ / YouTube |
 | D | Devices |
 | Esc / Q | Close |
 

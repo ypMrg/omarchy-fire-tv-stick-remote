@@ -383,6 +383,7 @@ BarWidget {
     else if (key === "1") sendAction("app-netflix")
     else if (key === "2") sendAction("app-prime")
     else if (key === "3") sendAction("app-disney")
+    else if (key === "4") sendAction("app-youtube")
     else if (key === "q") close()
   }
 
@@ -783,17 +784,22 @@ BarWidget {
             RemoteKey {
               action: "app-netflix"
               logo: "assets/netflix.svg"
-              keyWidth: root.equalKeyWidth(remoteView.width, 3)
+              keyWidth: root.equalKeyWidth(remoteView.width, 4)
             }
             RemoteKey {
               action: "app-prime"
               logo: "assets/prime.svg"
-              keyWidth: root.equalKeyWidth(remoteView.width, 3)
+              keyWidth: root.equalKeyWidth(remoteView.width, 4)
             }
             RemoteKey {
               action: "app-disney"
               logo: "assets/disney.svg"
-              keyWidth: root.equalKeyWidth(remoteView.width, 3)
+              keyWidth: root.equalKeyWidth(remoteView.width, 4)
+            }
+            RemoteKey {
+              action: "app-youtube"
+              logo: "assets/youtube.svg"
+              keyWidth: root.equalKeyWidth(remoteView.width, 4)
             }
           }
 
@@ -818,7 +824,7 @@ BarWidget {
             width: parent.width
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
-            text: "[↑↓←→] MOVE  [↵] OK  [B/G/M]  [P] PLAY  [1-3] APPS  [D] DEV  [ESC]"
+            text: "[↑↓←→] MOVE  [↵] OK  [B/G/M]  [P] PLAY  [-/+] VOL  [1-4] APPS  [D] DEV  [ESC]"
             color: root.dim
             font.family: root.fontFamily
             font.pixelSize: root.clampFont(Style.font.caption, Style.space(8), Style.space(12))
