@@ -91,11 +91,11 @@ assert "process.stdout.readexactly(AVAHI_OUTPUT_LIMIT_BYTES + 1)" in source
 
 apps_start = source.index("APP_PACKAGES")
 apps_end = source.index("}", apps_start) + 1
-# Only the three UI apps should ship.
+# Only the four UI apps should ship.
 assert '"netflix"' in source[apps_start:apps_end]
 assert '"prime"' in source[apps_start:apps_end]
 assert '"disney"' in source[apps_start:apps_end]
-assert '"youtube"' not in source[apps_start:apps_end]
+assert '"youtube"' in source[apps_start:apps_end]
 assert '"twitch"' not in source[apps_start:apps_end]
 
 manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
@@ -109,7 +109,7 @@ assert "ADB debugging" in readme
 assert "github.com/ypMrg/omarchy-fire-tv-stick-remote.git" in readme
 assert "github.com/MatthieuGC/" not in readme
 assert (root / "Widget.qml").is_file()
-for logo_name in ("netflix.svg", "prime.svg", "disney.svg"):
+for logo_name in ("netflix.svg", "prime.svg", "disney.svg", "youtube.svg"):
     logo_path = root / "assets" / logo_name
     assert logo_path.is_file()
     logo = logo_path.read_text(encoding="utf-8").lower()

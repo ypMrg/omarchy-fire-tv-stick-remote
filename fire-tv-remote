@@ -13,7 +13,7 @@ FIRE_TV_HOST="${FIRE_TV_HOST:-192.168.1.100:5555}"
 FIRE_TV_NAME="${FIRE_TV_NAME:-Fire TV Stick}"
 
 # Keep in sync with KEYEVENTS + APP_PACKAGES in fire-tv-remote-session.py
-REMOTE_ACTIONS='up|down|left|right|select|back|home|menu|play-pause|previous|next|volume-down|volume-up|wake|sleep|status|app-netflix|app-prime|app-disney'
+REMOTE_ACTIONS='up|down|left|right|select|back|home|menu|play-pause|previous|next|volume-down|volume-up|wake|sleep|status|app-netflix|app-prime|app-disney|app-youtube'
 
 usage() {
   cat <<'EOF'
@@ -29,7 +29,7 @@ Power and status:
   wake sleep status
 
 Apps:
-  app-netflix app-prime app-disney
+  app-netflix app-prime app-disney app-youtube
 
 Internal:
   session

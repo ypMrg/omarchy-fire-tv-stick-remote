@@ -10,5 +10,6 @@ foreground — the original navy/black brand colors disappear on dark themes.
 | `netflix.svg` | Wikimedia Commons — Netflix 2015 logo |
 | `prime.svg` | Wikimedia Commons — Amazon Prime Video logo |
 | `disney.svg` | Wikimedia Commons — Disney+ logo |
+| `youtube.svg` | Simple Icons (CC0) — YouTube logo |
 
 Trademarks remain property of their owners. No affiliation claimed.

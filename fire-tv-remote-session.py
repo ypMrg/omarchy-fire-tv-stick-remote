@@ -50,6 +50,7 @@ APP_PACKAGES: dict[str, list[str]] = {
     "netflix": ["com.netflix.ninja"],
     "prime": ["com.amazon.avod"],
     "disney": ["com.disney.disneyplus"],
+    "youtube": ["com.amazon.firetv.youtube", "com.google.android.youtube.tv"],
 }
 
 DEFAULT_ADB_PORT = 5555
